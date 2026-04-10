@@ -38,7 +38,7 @@ def remove_bg_api(image_bytes):
 # --- FUNGSI ANALISA GEMINI (MENGGUNAKAN MODEL 2.0) ---
 def analisa_gemini_sdk(image_bytes):
     # Menggunakan model 2.0 yang SAH dari hasil radar Anda
-    model = genai.GenerativeModel('gemini-2.0-flash-lite')
+    model = genai.GenerativeModel('gemini-pro-vision')
     
     img_pil = Image.open(io.BytesIO(image_bytes))
     
