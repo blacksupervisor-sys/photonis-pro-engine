@@ -52,20 +52,28 @@ def create_visual_pdf(text, logo, brand, product_bytes):
     pdf = VISUAL_PDF(logo_image=logo, brand_name=brand)
     pdf.add_page()
     
-    # 2. Masukkan Gambar Produk di Bagian Atas
+    # 1. Menampilkan Gambar Produk
     if product_bytes:
         prod_img = Image.open(io.BytesIO(product_bytes))
         prod_buf = io.BytesIO()
         prod_img.save(prod_buf, format='PNG')
         prod_buf.seek(0)
-        # Menempatkan gambar produk di tengah
         pdf.image(prod_buf, x=55, y=45, w=100)
-        pdf.ln(70) # Memberi ruang agar teks tidak menabrak gambar
+        pdf.ln(80) 
 
-    # 3. Masukkan Teks Analisa
-    pdf.set_font("helvetica", size=10)
-    normalized_text = text.encode('latin-1', 'ignore').decode('latin-1')
-    pdf.multi_cell(0, 6, normalized_text)
+    # 2. Pembersihan Teks (Menghapus Tanda * dan Karakter Markdown)
+    # Menghapus double asterisk (bold), single asterisk (italic/list), dan hashtag (heading)
+    clean_text = text.replace('**', '').replace('*', '').replace('#', '')
+    
+    # 3. Pengaturan Font & Margin untuk Tampilan Profesional
+    pdf.set_font("helvetica", size=11)
+    pdf.set_text_color(50, 50, 50) # Abu-abu gelap agar lebih elegan dibanding hitam pekat
+    
+    # Normalisasi karakter agar tidak menyebabkan UnicodeEncodeError
+    normalized_text = clean_text.encode('latin-1', 'ignore').decode('latin-1')
+    
+    # Menggunakan multi_cell dengan line spacing yang lebih lega (8)
+    pdf.multi_cell(0, 8, normalized_text)
     
     return pdf.output()
 
