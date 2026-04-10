@@ -58,22 +58,28 @@ def create_visual_pdf(text, logo, brand, product_bytes):
         prod_buf = io.BytesIO()
         prod_img.save(prod_buf, format='PNG')
         prod_buf.seek(0)
+        # Menaruh gambar di tengah
         pdf.image(prod_buf, x=55, y=45, w=100)
-        pdf.ln(80) 
+        pdf.ln(85) 
 
-    # 2. Pembersihan Teks (Menghapus Tanda * dan Karakter Markdown)
-    # Menghapus double asterisk (bold), single asterisk (italic/list), dan hashtag (heading)
-    clean_text = text.replace('**', '').replace('*', '').replace('#', '')
+    # 2. PEMBERSIHAN TOTAL TANDA BACA MARKDOWN
+    # Menghapus simbol bold (**), italic (*), heading (#), dan garis horizontal (---)
+    clean_text = text.replace('**', '').replace('*', '').replace('#', '').replace('---', '')
     
-    # 3. Pengaturan Font & Margin untuk Tampilan Profesional
+    # 3. Formatting Teks agar Elegan
     pdf.set_font("helvetica", size=11)
-    pdf.set_text_color(50, 50, 50) # Abu-abu gelap agar lebih elegan dibanding hitam pekat
+    pdf.set_text_color(40, 40, 40) # Warna abu-abu sangat tua agar terlihat premium
     
-    # Normalisasi karakter agar tidak menyebabkan UnicodeEncodeError
+    # Normalisasi karakter agar tidak error saat PDF dibuat
     normalized_text = clean_text.encode('latin-1', 'ignore').decode('latin-1')
     
-    # Menggunakan multi_cell dengan line spacing yang lebih lega (8)
-    pdf.multi_cell(0, 8, normalized_text)
+    # Menulis teks dengan spasi antar baris yang lebih lega (interline = 7)
+    for line in normalized_text.split('\n'):
+        # Menghapus spasi berlebih di awal baris yang sering muncul dari Markdown
+        stripped_line = line.strip()
+        if stripped_line:
+            pdf.multi_cell(0, 7, stripped_line)
+            pdf.ln(1) # Jarak antar paragraf
     
     return pdf.output()
 
